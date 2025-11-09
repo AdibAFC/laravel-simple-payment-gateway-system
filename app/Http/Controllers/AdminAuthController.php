@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Bank;
+use App\Models\Merchant;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -53,10 +56,35 @@ class AdminAuthController extends Controller
         return redirect()->route('admin.dashboard');
     }
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        return view('admin.dashboard');
+        // Determine which tab is selected (default: banks)
+        $tab = $request->query('tab', 'banks');
+
+        // Counts for sidebar
+        $counts = [
+            'banks'        => \App\Models\Bank::count(),
+            'merchants'    => \App\Models\Merchant::count(),
+            'transactions' => \App\Models\Transaction::count(),
+        ];
+
+        // Load only data for the active tab
+        $banks = $merchants = $transactions = collect();
+
+        if ($tab === 'banks') {
+            $banks = \App\Models\Bank::latest('id')->paginate(10, ['*'], 'banks');
+        } elseif ($tab === 'merchants') {
+            $merchants = \App\Models\Merchant::latest('id')->paginate(10, ['*'], 'merchants');
+        } else {
+            $transactions = \App\Models\Transaction::with(['merchant', 'bank', 'pos', 'currency'])
+                ->latest('id')
+                ->paginate(10, ['*'], 'transactions');
+        }
+
+        // Send data to the view
+        return view('admin.dashboard', compact('tab', 'counts', 'banks', 'merchants', 'transactions'));
     }
+
 
     public function logout(Request $request)
     {
