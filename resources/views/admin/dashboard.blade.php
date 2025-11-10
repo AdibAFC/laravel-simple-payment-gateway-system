@@ -6,7 +6,12 @@
     <p style="color:#6b7280;margin:0;">Welcome, <strong>{{ auth('admin')->user()->name }}</strong>.</p>
   </div>
 
-  @if ($tab==='banks')
+  @if (empty($tab))
+    <div class="card">
+      <h2>Welcome, {{ auth('admin')->user()->name }}</h2>
+      <p>Select a tab on the left to view data.</p>
+    </div>
+  @elseif ($tab==='banks')
     <div class="card">
       <h3 style="margin:0 0 10px 0;">Banks</h3>
       <div class="table-wrap">

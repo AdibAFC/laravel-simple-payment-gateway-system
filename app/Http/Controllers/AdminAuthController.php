@@ -59,7 +59,7 @@ class AdminAuthController extends Controller
     public function dashboard(Request $request)
     {
         // Determine which tab is selected (default: banks)
-        $tab = $request->query('tab', 'banks');
+        $tab = $request->query('tab');
 
         // Counts for sidebar
         $counts = [
@@ -75,7 +75,7 @@ class AdminAuthController extends Controller
             $banks = \App\Models\Bank::latest('id')->paginate(10, ['*'], 'banks');
         } elseif ($tab === 'merchants') {
             $merchants = \App\Models\Merchant::latest('id')->paginate(10, ['*'], 'merchants');
-        } else {
+        } elseif ($tab === 'transactions') {
             $transactions = \App\Models\Transaction::with(['merchant', 'bank', 'pos', 'currency'])
                 ->latest('id')
                 ->paginate(10, ['*'], 'transactions');

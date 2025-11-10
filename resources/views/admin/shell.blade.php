@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>PayGate • Admin</title>
-  <style>
+  <title>{{ config('app.name') }} • Admin</title>
+  <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+  @stack('styles')
+  <!-- <style>
     :root{
       --bg:#f6f7fb; --card:#fff; --ink:#0f223f;
       --side:#0b1220; --side-muted:#111827; --text:#e5e7eb; --hover:#1f2937;
@@ -38,23 +40,17 @@
       .brand{ display:none }
       .nav{ display:flex; gap:8px }
     }
-  </style>
+  </style> -->
 </head>
 <body>
-  <header>
-    <div><strong>PayGate Admin</strong></div>
-    <form method="POST" action="{{ route('admin.logout') }}">
-      @csrf
-      <button class="btn" type="submit">Logout</button>
-    </form>
-  </header>
+  @include('admin.partials.header')
 
   @php $activeTab = request('tab','banks'); @endphp
 
   <div class="layout">
     <!-- Sidebar -->
     <aside>
-      <div class="brand">PayGate</div>
+      <div class="brand">{{ config('app.name') }}</div>
       <nav class="nav">
         <a href="{{ route('admin.dashboard', ['tab'=>'banks']) }}" class="{{ $activeTab==='banks'?'active':'' }}">
           Banks <span class="count">{{ $counts['banks'] ?? '' }}</span>
